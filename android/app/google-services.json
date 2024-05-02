@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1081829677569",
+    "project_id": "byyourway-2cde3",
+    "storage_bucket": "byyourway-2cde3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081829677569:android:d1352213894df86d32fe00",
+        "android_client_info": {
+          "package_name": "com.byyourway.app.by_your_way"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGwY8v3K_CYLX6bWLZytI8dvB-ySZQFsA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
