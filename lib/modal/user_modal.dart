@@ -1,23 +1,28 @@
 
 
 import 'package:by_your_way/constants/api_keys.dart';
+import 'package:by_your_way/constants/global_data.dart';
 import 'package:by_your_way/extensions/capitalise_first_letter.dart';
 
+import '../constants/types/user_type.dart';
+import '../functions/getRatingCount.dart';
 import '../services/api_urls.dart';
 
 
 class UserModal {
   int id;
-  String? firstName;
-  String? lastName;
+  String firstName;
+  String lastName;
   String email;
   String phoneCode;
   String phone;
   int status;
   String? profileImage;
-  int? userType;
+  int userType;
   int verification_status;
-  String? userName;
+  String fullName;
+  int ratingCount;
+  double averageRating;
 
 
 
@@ -25,7 +30,7 @@ class UserModal {
     required this.id,
     required this.firstName,
     required this.lastName,
-    required this.userName,
+    required this.fullName,
     required this.email,
     required this.phoneCode,
     required this.phone,
@@ -33,7 +38,16 @@ class UserModal {
     required this.profileImage,
     required this.userType,
     required this.verification_status,
+    required this.ratingCount,
+    required this.averageRating,
+
   });
+
+
+  String getRatingString(){
+    // '${widget.providerModal.providerDetail!.avgRating} ${getRatingCount(widget.providerModal.providerDetail!.ratingCount)}',
+    return '$averageRating ${getRatingCount(ratingCount)}';
+  }
 
   factory UserModal.fromJson(Map json) {
     String fullName = '';
@@ -47,17 +61,19 @@ class UserModal {
     fullName = temp.join(" ");
     return UserModal(
       id: json[ApiKeys.id],
-      firstName: json[ApiKeys.firstName],
-      lastName: json[ApiKeys.lastName],
-      userName:json[ApiKeys.firstName]==null?null: '${json[ApiKeys.firstName]} ${json[ApiKeys.lastName]}',
+      firstName: json[ApiKeys.firstName]??'',
+      lastName: json[ApiKeys.lastName]??'',
+      fullName:json[ApiKeys.firstName]==null?'':'${json[ApiKeys.firstName]} ${json[ApiKeys.lastName]}',
       email: json[ApiKeys.email],
       phoneCode: json[ApiKeys.phoneCode],
       phone: json[ApiKeys.phone],
-      status: json[ApiKeys.status],
+      status: json[ApiKeys.user_status]??json[ApiKeys.status],
       profileImage:  json[ApiKeys.profileImage]==null?null:ApiUrls.baseImageUrl + json[ApiKeys.profileImage],
-      userType: json[ApiKeys.userType],
+      userType: json[ApiKeys.userType]??UserType.user,
       // verification_status: 0,
-      verification_status: json[ApiKeys.verification_status],
+      verification_status: json[ApiKeys.user_status]??json[ApiKeys.status],
+      ratingCount: json[ApiKeys.ratingCount]??0,
+      averageRating: double.tryParse(json[ApiKeys.averageRating].toString())??0,
     );
   }
 

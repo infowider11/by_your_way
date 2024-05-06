@@ -9,6 +9,7 @@ import '../../../constants/my_image_url.dart';
 import '../../../constants/sized_box.dart';
 import '../../../widget/common_alert_dailog.dart';
 import '../../../widget/round_edged_button.dart';
+import '../../constants/types/user_type.dart';
 import '../../provider/bottom_tabbar_provider.dart';
 import 'dart:math' as math;
 
@@ -90,7 +91,7 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                   key: _scaffoldKey,
                   resizeToAvoidBottomInset: false,
                   backgroundColor: MyColors.transparent,
-                  body: userType != UserTypeData.Driver
+                  body: userDataNotifier.value!.userType != UserType.driver
                       ? bottomBarProvider
                           .tabsUser[bottomBarProvider.currentIndex]
                       : bottomBarProvider
@@ -110,7 +111,7 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                             boxShadow: [
                               BoxShadow(color: MyColors.primaryColor)
                             ]),
-                        child: userType != UserTypeData.Driver
+                        child: userDataNotifier.value!.userType != UserType.driver
                             ? const Icon(
                                 Icons.add,
                                 size: 30,

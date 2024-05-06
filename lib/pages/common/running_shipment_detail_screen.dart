@@ -13,12 +13,13 @@ import 'package:flutter/material.dart';
 import 'package:by_your_way/constants/global_data.dart';
 import 'package:by_your_way/constants/my_colors.dart';
 import 'package:provider/provider.dart';
+import '../../constants/types/user_type.dart';
 import '../../provider/bottom_tabbar_provider.dart';
 import '../../widget/custom_appbar.dart';
 
 class RunningShipmentDetailScreen extends StatefulWidget {
   final RequestType requestType;
-  final UserTypeData userTypeData;
+  final int userTypeData;
   final bool isCompany;
 
   const RunningShipmentDetailScreen(
@@ -66,7 +67,7 @@ class _RunningShipmentDetailScreenState
               ),
               vSizedBox2,
               MainHeadingText(
-                widget.userTypeData == UserTypeData.Driver
+                widget.userTypeData == UserType.driver
                     ? widget.isCompany
                         ? "Company Detail"
                         : "User detail"
@@ -226,8 +227,9 @@ class _RunningShipmentDetailScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const ParagraphText(
-                          "John Doe",
+                         ParagraphText(
+                          "${userDataNotifier.value!.fullName}",
+                          // "John Doe",
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),

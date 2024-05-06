@@ -30,28 +30,29 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   }
 
   void init() {
-    if (userType == UserTypeData.Company) {
-      titleList = [
-        'My Profile',
-        "Change Password",
-        "Language",
-        "Contact Us",
-        "Terms & Conditions",
-        "Privacy Policy",
-        "Log Out",
-      ];
-    } else {
-      titleList = [
-        'My Profile',
-        "Change Password",
-        "Payment Method",
-        "Language",
-        "Contact Us",
-        "Terms & Conditions",
-        "Privacy Policy",
-        "Log Out",
-      ];
-    }
+    titleList = [
+      'My Profile',
+      "Change Password",
+      "Payment Method",
+      "Language",
+      "Contact Us",
+      "Terms & Conditions",
+      "Privacy Policy",
+      "Log Out",
+    ];
+    // if (UserType.driver == UserTypeData.Company) {
+    //   titleList = [
+    //     'My Profile',
+    //     "Change Password",
+    //     "Language",
+    //     "Contact Us",
+    //     "Terms & Conditions",
+    //     "Privacy Policy",
+    //     "Log Out",
+    //   ];
+    // } else {
+    //
+    // }
   }
 
   @override
@@ -60,7 +61,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       backgroundColor: Colors.transparent,
       appBar: CustomAppBar(
         isBackIcon: false,
-        title: const Padding(
+        title:  Padding(
           padding: EdgeInsets.only(left: globalHorizontalPadding),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,12 +77,13 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ],
               ),
               CustomCircularImage(
-                  imageUrl: MyImagesUrl.iconDummyUser,
+                  imageUrl: userDataNotifier.value!.profileImage,
                   width: 45,
                   height: 45,
                   borderRadius: 25,
                   padding: 0,
-                  fileType: CustomFileType.asset),
+                  // fileType: CustomFileType.asset,
+              ),
             ],
           ),
         ),
@@ -116,37 +118,41 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              const CustomCircularImage(
-                                  imageUrl: MyImagesUrl.iconDummyUser,
+                               CustomCircularImage(
+                                  imageUrl: userDataNotifier.value!.profileImage,
                                   width: 100,
                                   height: 100,
                                   borderRadius: 50,
                                   padding: 0,
-                                  fileType: CustomFileType.asset),
+                                  // fileType: CustomFileType.asset,
+                              ),
                               hSizedBox,
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const MainHeadingText(
-                                      "John Doe",
+                                     MainHeadingText(
+                                      "${userDataNotifier.value!.fullName}",
+                                      // "John Doe",
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
                                     ),
                                     vSizedBox05,
                                     ParagraphText(
-                                      "john@gmail.com",
-                                      fontSize: 15,
+                                      "${userDataNotifier.value!.email}",
+                                      // "john@gmail.com",
+                                      fontSize: 13,
                                       fontWeight: FontWeight.w500,
                                       color: MyColors.blackColor50,
                                     ),
                                   ],
                                 ),
-                              )
+                              ),
+                              hSizedBox,
                             ],
                           ),
                         ),
-                        if (userType != UserTypeData.Company)
+                        // if (userDataNotifier.value!.userType != UserTypeData.Company)
                           Image.asset(
                             MyImagesUrl.imageQr,
                             height: 45,
@@ -163,6 +169,10 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
+
+                      // child: Column(
+                      //   children: [],
+                      // )
                       child: ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),

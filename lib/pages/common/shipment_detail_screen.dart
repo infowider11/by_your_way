@@ -15,13 +15,14 @@ import 'package:flutter/material.dart';
 import 'package:by_your_way/constants/global_data.dart';
 import 'package:by_your_way/constants/my_colors.dart';
 import 'package:provider/provider.dart';
+import '../../constants/types/user_type.dart';
 import '../../functions/common_function.dart';
 import '../../widget/common_alert_dailog.dart';
 import '../../widget/custom_appbar.dart';
 import '../../widget/round_edged_button.dart';
 
 class ShipmentDetailScreen extends StatefulWidget {
-  final UserTypeData userTypeData;
+  final int userTypeData;
   final bool isCompany;
 
   const ShipmentDetailScreen({
@@ -66,14 +67,14 @@ class _ShipmentDetailScreenState extends State<ShipmentDetailScreen> {
                 ],
               ),
               vSizedBox2,
-              if (widget.userTypeData == UserTypeData.Driver)
+              if (widget.userTypeData == UserType.driver)
                 MainHeadingText(
                   widget.isCompany ? "Company detail" : "User detail",
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
-              if (widget.userTypeData == UserTypeData.Driver) vSizedBox,
-              if (widget.userTypeData == UserTypeData.Driver)
+              if (widget.userTypeData == UserType.driver) vSizedBox,
+              if (widget.userTypeData == UserType.driver)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -122,7 +123,7 @@ class _ShipmentDetailScreenState extends State<ShipmentDetailScreen> {
                       ),
                   ],
                 ),
-              if (widget.userTypeData == UserTypeData.Driver) vSizedBox2,
+              if (widget.userTypeData == UserType.driver) vSizedBox2,
               Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: globalHorizontalPadding,
@@ -282,14 +283,14 @@ class _ShipmentDetailScreenState extends State<ShipmentDetailScreen> {
                 ],
               ),
               vSizedBox2,
-              if (widget.userTypeData != UserTypeData.Driver)
+              if (widget.userTypeData != UserType.driver)
                 const MainHeadingText(
                   "Drivers who applied for this job",
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
-              if (widget.userTypeData != UserTypeData.Driver) vSizedBox,
-              if (widget.userTypeData != UserTypeData.Driver)
+              if (widget.userTypeData != UserType.driver) vSizedBox,
+              if (widget.userTypeData != UserType.driver)
                 ListView.builder(
                   itemBuilder: (context, index) {
                     return Padding(
@@ -414,16 +415,16 @@ class _ShipmentDetailScreenState extends State<ShipmentDetailScreen> {
                   shrinkWrap: true,
                   itemCount: 10,
                 ),
-              if (widget.userTypeData == UserTypeData.Driver)
+              if (widget.userTypeData == UserType.driver)
                 const MainHeadingText(
                   "Uploaded Images",
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
-              if (widget.userTypeData == UserTypeData.Driver) vSizedBox,
-              if (widget.userTypeData == UserTypeData.Driver)
+              if (widget.userTypeData == UserType.driver) vSizedBox,
+              if (widget.userTypeData == UserType.driver)
                 uploadedImageView(),
-              if (widget.userTypeData == UserTypeData.Driver)
+              if (widget.userTypeData == UserType.driver)
                 RoundEdgedButton(
                   text: "Apply",
                   verticalMargin: 15,

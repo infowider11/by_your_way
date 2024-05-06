@@ -8,6 +8,7 @@ import 'package:by_your_way/pages/auth_module/terms_screen.dart';
 import 'package:by_your_way/pages/driver/driver_profile_screen.dart';
 import 'package:by_your_way/pages/user/user_profile_screen.dart';
 import 'package:by_your_way/pages/common/payment_method_screen.dart';
+import 'package:by_your_way/provider/app_language_provider.dart';
 import 'package:by_your_way/widget/custom_bottom_sheet.dart';
 import 'package:by_your_way/widget/custom_gesture_detector.dart';
 import 'package:by_your_way/widget/custom_text.dart';
@@ -23,12 +24,17 @@ import '../constants/my_colors.dart';
 import '../constants/my_image_url.dart';
 import '../constants/shared_preference_keys.dart';
 import '../constants/sized_box.dart';
+import '../constants/types/user_type.dart';
 import '../functions/navigation_functions.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
+import '../functions/print_function.dart';
 import '../modal/user_modal.dart';
 import '../pages/auth_module/intro_screen.dart';
+import '../pages/auth_module/pending_verification_screen.dart';
+import '../pages/common/bottom_tab.dart';
 import '../services/api_urls.dart';
+import '../services/custom_navigation_services.dart';
 import '../services/firebase_push_notifications.dart';
 import '../services/webservices.dart';
 import '../widget/common_alert_dailog.dart';
@@ -36,10 +42,11 @@ import '../widget/round_edged_button.dart';
 import '../widget/show_snackbar.dart';
 import 'admin_settings_provider.dart';
 import 'bottom_tabbar_provider.dart';
+import 'location_provider.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool load = false;
-  ValueNotifier<int> selectedLanguage = ValueNotifier(0);
+  // ValueNotifier<int> selectedLanguage = ValueNotifier(0);
 
   void showLoading() {
     load = true;
@@ -53,18 +60,14 @@ class AuthProvider extends ChangeNotifier {
 
   void userNavigationAfterLogin(BuildContext context) {
     FirebasePushNotifications.updateDeviceToken();
-    /*   if(userDataNotifier.value?.firstName==null || userDataNotifier.value?.userType==null){
-      CustomNavigation.pushAndRemoveUntil(context: context, screen: SelectUserType());
-    }else if(userDataNotifier.value?.userType==UserType.provider && (userDataNotifier.value?.providerDetail?.category==null || userDataNotifier.value?.providerDetail?.subCategory==null)){
-      CustomNavigation.pushAndRemoveUntil(context: context, screen: SelectProviderCategory());
-    }else if(userDataNotifier.value?.userType==UserType.provider && userDataNotifier.value?.dob==null){
-      CustomNavigation.pushAndRemoveUntil(context: context, screen: AddProviderInfo());
-    }else if(userDataNotifier.value?.userType==UserType.provider && userDataNotifier.value?.verification_status==0){
+       if(userDataNotifier.value?.firstName==null || userDataNotifier.value?.userType==null){
+      CustomNavigation.pushAndRemoveUntil(context: context, screen: PreSignUpScreen());
+    }else if(userDataNotifier.value?.userType==UserType.driver && userDataNotifier.value?.verification_status==0){
       CustomNavigation.pushAndRemoveUntil(context: context, screen: PendingVerificationScreen());
     }
     else{
       pushAndRemoveUntil(context: context, screen: const BottomBarScreen());
-    }*/
+    }
   }
 
   Future<void> splashAuthentication(context) async {
@@ -78,21 +81,26 @@ class AuthProvider extends ChangeNotifier {
     //await adminSettingsProvider.getDefaultAppSettings();
 
     sharedPreference = await SharedPreferences.getInstance();
+    var appLanguageProvider = Provider.of<AppLanguageProvider>(context, listen: false);
+    appLanguageProvider.initializeLanguage();
+    await getCategoriesAndSubCategories();
     UserModal? result = await isLoggedIn();
 
     if (result != null) {
-      String? lang =
-          sharedPreference.getString(SharedPreferenceKeys.selectedLanguage);
-      if (lang != null) {
-        if (lang == 'ar') {
-          selectedLanguageNotifier.value = languagesList[1];
-        } else {
-          selectedLanguageNotifier.value = languagesList[0];
-        }
-      } else {
-        selectedLanguageNotifier.value = languagesList[0];
-      }
-      //userNavigationAfterLogin(context);
+      // String? lang =
+      //     sharedPreference.getString(SharedPreferenceKeys.selectedLanguage);
+      // if (lang != null) {
+      //   if (lang == 'ar') {
+      //     selectedLanguageNotifier.value = languagesList[1];
+      //   } else {
+      //     selectedLanguageNotifier.value = languagesList[0];
+      //   }
+      // } else {
+      //   selectedLanguageNotifier.value = languagesList[0];
+      // }
+
+
+      userNavigationAfterLogin(context);
     } else {
       pushAndRemoveUntil(context: context, screen: const IntroScreen());
     }
@@ -125,8 +133,8 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> updateUserData() async {
-    var jsonResponse = await NewWebServices.postData(
-        isGetMethod: true,
+    var jsonResponse = await NewestWebServices.getResponse(
+        apiMethod: ApiMethod.get,
         apiUrl: ApiUrls.getUserDetails,
         request: {},
         showSuccessMessage: false);
@@ -162,31 +170,73 @@ class AuthProvider extends ChangeNotifier {
       await updateUserDataInSharedPreference(
           userData: jsonResponse.data[ApiKeys.user_info],
           token: jsonResponse.data['token']);
+
+      // showSuccesfulRegistration();
       // ignore: use_build_context_synchronously
       userNavigationAfterLogin(context);
     }
     hideLoading();
   }
 
-  Future<void> signupDriver(BuildContext context,
-      {required Map<String, dynamic> request,
-      required Map<String, dynamic> files}) async {
+  Future showSuccesfulRegistration()async{
+    return  showSuccessPopup(
+      context: MyGlobalKeys.navigatorKey.currentContext!,
+      heading: "Congratulations!!",
+      subtitle:
+      "Your Registration has been completed Successfully. Admin will check your documents and back to you 3-4 business days",
+      bottomWidget: Center(
+        child: RoundEdgedButton(
+          text: "OK",
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          height: 50,
+          width: 90,
+          borderRadius: 10,
+          onTap: () {
+            // userType = UserTypeData.Driver;
+            // pushAndRemoveUntil(
+            //     context: MyGlobalKeys.navigatorKey.currentContext!,
+            //     screen: const BottomBarScreen());
+          },
+        ),
+      ),
+    );
+  }
+
+
+
+  Future<bool> checkUniqueness(BuildContext context,
+      {required String email, required String phoneNumberWithCode}) async {
     showLoading();
-
-    var jsonResponse = await NewestWebServices.postDataWithImageFunction(
-        apiUrl: ApiUrls.signup, body: request, files: files);
+    var request = {ApiKeys.email: email, ApiKeys.phone_with_code: phoneNumberWithCode};
+    var jsonResponse = await NewestWebServices.getResponse(
+        apiUrl: ApiUrls.checkPhoneEmailUniqueness, request: request);
     if (jsonResponse.status == 1) {
-      await updateUserDataInSharedPreference(
-          userData: jsonResponse.data[ApiKeys.user_info],
-          token: jsonResponse.data['token']);
-      // ignore: use_build_context_synchronously
-
-      //pushAndRemoveUntil(context: context, screen: const BottomBarScreen());
-
-      // userNavigationAfterLogin(context);
+      hideLoading();
+      return true;
     }
     hideLoading();
+    return false;
+
   }
+
+
+
+
+  getCategoriesAndSubCategories()async{
+    var response =await NewestWebServices.getResponse(apiUrl: ApiUrls.getVehicleTypeList, request: {}, apiMethod: ApiMethod.get);
+    if(response.status==1){
+      globalCategoriesList = response.data[ApiKeys.data];
+    }
+
+    var subresponse =await NewestWebServices.getResponse(apiUrl: ApiUrls.getVehicleModelList, request: {}, apiMethod: ApiMethod.get);
+    if(subresponse.status==1){
+      globalSubCategoriesList = subresponse.data[ApiKeys.data];
+    }
+    notifyListeners();
+    // globalCategoriesList =
+  }
+
 
   Future<void> forgetPassword(BuildContext context,
       {required String email}) async {
@@ -197,7 +247,7 @@ class AuthProvider extends ChangeNotifier {
     var jsonResponse = await NewestWebServices.getResponse(
         apiUrl: ApiUrls.forgetPassword,
         request: request,
-        apiMethod: ApiMethod.get,
+        apiMethod: ApiMethod.post,
         load: true);
     if (jsonResponse.status == 1) {
       // ignore: use_build_context_synchronously
@@ -209,28 +259,81 @@ class AuthProvider extends ChangeNotifier {
 
   Timer? intervalTimer;
 
-  Future<void> intervalProviderToCheckBlockStatus() async {
+
+  intervalProviderToCheckBlockStatus()async{
+
+
+    var locationProvider = Provider.of<MyLocationProvider>(MyGlobalKeys.navigatorKey.currentContext!, listen: false);
+
     intervalTimer?.cancel();
-    intervalTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      NewestWebServices.getResponse(
-              apiUrl: ApiUrls.interval, request: {}, apiMethod: ApiMethod.get)
-          .then((value) {
-        if (value.data['status'] != 1) {
-          showSnackbar(value.message);
-          intervalTimer?.cancel();
-          logout(MyGlobalKeys.navigatorKey.currentContext!);
+    intervalTimer = Timer.periodic(Duration(seconds: 5), (timer) {
+      try{
+        Map<String, dynamic> request = {
+
+        };
+        if(locationProvider.latitude!=0){
+          request['latitude'] = locationProvider.latitude;
+          request['longitude'] = locationProvider.longitude;
+          request[ApiKeys.userType] = userDataNotifier.value?.userType;
         }
-      });
+        NewestWebServices.getResponse(apiUrl: ApiUrls.interval, request: request, apiMethod: ApiMethod.put).then((value){
+          if(value.status==1){
+            // var bookingProvider =
+            // Provider.of<BookingProvider>(MyGlobalKeys.navigatorKey.currentContext!,
+            //     listen: false);
+            Map? bookingMap =value.data['latest_bookings'];
+            if(bookingMap!=null){
+            //   myCustomPrintStatement('The user has a new booking ... ${bookingProvider.hasNoBooking.value}  .... ${bookingProvider.isBookingDialogOpen}: ${bookingMap}');
+            //   bookingProvider.hasNoBooking.value = false;
+            //   if(bookingProvider.isBookingDialogOpen == false){
+            //     // bookingProvider.isBookingDialogOpen = true;
+            //     print('opening booking dialog');
+            //     BookingModal bookingModal = BookingModal.fromJson(bookingMap);
+            //     bookingProvider.showBookingPopup(bookingModal);
+            //   }
+            }else{
+              myCustomPrintStatement('The user has no booking');
+              // bookingProvider.hasNoBooking.value = true;
+              // bookingProvider.isBookingDialogOpen = false;
+            }
+
+
+          }else
+          if(value.data['status']==2){
+            showSnackbar(value.message);
+            intervalTimer?.cancel();
+            logout(MyGlobalKeys.navigatorKey.currentContext!);
+          }
+        });
+
+      }catch(e){
+
+      }
     });
+
   }
+  // Future<void> intervalProviderToCheckBlockStatus() async {
+  //   intervalTimer?.cancel();
+  //   intervalTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+  //     NewestWebServices.getResponse(
+  //             apiUrl: ApiUrls.interval, request: {}, apiMethod: ApiMethod.put)
+  //         .then((value) {
+  //       if (value.data['status'] != 1) {
+  //         showSnackbar(value.message);
+  //         intervalTimer?.cancel();
+  //         logout(MyGlobalKeys.navigatorKey.currentContext!);
+  //       }
+  //     });
+  //   });
+  // }
 
   Future<void> clickOnProfileMenu(
       {required int index, required BuildContext context}) async {
-    if (userType == UserTypeData.Company) {
+    if (userDataNotifier.value!.userType == UserType.company) {
       if (index == 0) {
-        if (userType == UserTypeData.User) {
+        if (userDataNotifier.value!.userType == UserType.user) {
           push(context: context, screen: const UserProfileScreen());
-        } else if (userType == UserTypeData.Driver) {
+        } else if (userDataNotifier.value!.userType == UserType.driver) {
           push(context: context, screen: const DriverProfileScreen());
         } else {
           push(context: context, screen: const UserProfileScreen());
@@ -250,9 +353,9 @@ class AuthProvider extends ChangeNotifier {
       }
     } else {
       if (index == 0) {
-        if (userType == UserTypeData.User) {
+        if (userDataNotifier.value!.userType == UserType.user) {
           push(context: context, screen: const UserProfileScreen());
-        } else if (userType == UserTypeData.Driver) {
+        } else if (userDataNotifier.value!.userType ==UserType.driver) {
           push(context: context, screen: const DriverProfileScreen());
         } else {
           push(context: context, screen: const UserProfileScreen());
@@ -290,12 +393,24 @@ class AuthProvider extends ChangeNotifier {
           apiMethod: ApiMethod.put,
           showSuccessMessage: true);
     } else {
-      response = await NewestWebServices.postDataWithImageFunction(
+      print('the files are ${files}');
+      for(int i = 0;i<files.keys.length;i++){
+        // print('the files is ${files.keys.toList()[i]}');
+
+        request[files.keys.toList()[i]] = await NewestWebServices.uploadImageAndGetUrl(files[files.keys.toList()[i]].path);
+      }
+      // dead;
+      response = await NewestWebServices.getResponse(
           apiUrl: ApiUrls.editProfile,
-          body: request,
-          files: files,
-          apiMethod: ApiMethod.post,
+          request: request,
+          apiMethod: ApiMethod.put,
           showSuccessMessage: true);
+      // response = await NewestWebServices.postDataWithImageFunction(
+      //     apiUrl: ApiUrls.editProfile,
+      //     body: request,
+      //     files: files,
+      //     apiMethod: ApiMethod.post,
+      //     showSuccessMessage: true);
     }
 
     if (response.status == 1) {
@@ -333,32 +448,35 @@ class AuthProvider extends ChangeNotifier {
   Future<void> languageBottomsheet({required BuildContext context}) async {
     await customBottomSheet(
       context,
-      child: ValueListenableBuilder(
-          valueListenable: selectedLanguage,
-          builder: (context, selectedValue, child) {
+      child: Consumer<AppLanguageProvider>(
+          builder: (context, appLanguageProvider, child) {
             return SizedBox(
               width: double.infinity,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   vSizedBox,
-                  CustomGestureDetector(
-                      onTap: () {
-                        selectedLanguage.value = 0;
-                      },
-                      borderRadius: 15,
-                      child: commonContainer(
-                          selected: selectedValue == 0, value: "English")),
-                  vSizedBox,
-                  CustomGestureDetector(
-                    onTap: () {
-                      selectedLanguage.value = 1;
-                    },
-                    borderRadius: 15,
-                    child: commonContainer(
-                        selected: selectedValue == 1, value: "Arabic"),
+                  for(int i = 0;i<languagesList.length;i++)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: CustomGestureDetector(
+                        onTap: () {
+                          appLanguageProvider.changeAppLanguage(languagesList[i]);
+                        },
+                        borderRadius: 15,
+                        child: commonContainer(
+                            selected: selectedLanguageNotifier==languagesList[i], value: languagesList[i]['value'])),
                   ),
-                  vSizedBox,
+                  // vSizedBox,
+                  // CustomGestureDetector(
+                  //   onTap: () {
+                  //     selectedLanguage.value = 1;
+                  //   },
+                  //   borderRadius: 15,
+                  //   child: commonContainer(
+                  //       selected: selectedValue == 1, value: "Arabic"),
+                  // ),
+                  // vSizedBox,
                   RoundEdgedButton(
                     text: "Update",
                     onTap: () {

@@ -2,19 +2,22 @@ class ApiKeys {
   static const String id = 'id';
   static const String email = 'email';
   static const String phone = 'phone';
-  static const String phoneCode = 'phoneCode';
+  static const String phoneCode = 'phone_code';
+  static const String phone_with_code = 'phone_with_code';
   static const String password = 'password';
-  static const String userType = 'userType';
-  static const String firstName = 'firstName';
-  static const String lastName = 'lastName';
-  static const String fullName = 'fullName';
+  static const String userType = 'user_type';
+  static const String deviceId = 'device_id';
+  static const String firstName = 'first_name';
+  static const String lastName = 'last_name';
+  static const String fullName = 'full_name';
   static const String status = 'status';
-  static const String profileImage = 'profileImage';
-  static const String oldPassword = 'oldPassword';
-  static const String newPassword = 'newPassword';
+  static const String profileImage = 'profile_image';
+  static const String oldPassword = 'old_password';
+  static const String newPassword = 'new_password';
 
   // ignore: constant_identifier_names
-  static const String verification_status = 'verification_status';
+  // static const String verification_status = 'verification_status';
+  static const String user_status = 'user_status';
 
   // ignore: constant_identifier_names
   static const String provider_detail = 'provider_detail';
@@ -28,15 +31,16 @@ class ApiKeys {
   static const String state_name = 'state_name';
 
   // ignore: constant_identifier_names
-  static const String country_code = 'country_code';
+  // static const String country_code = 'country_code';
   static const String flag = 'flag';
   static const String message = 'message';
-  static const String categoryList = 'categoryList';
-  static const String subCategoryList = 'subCategoryList';
+  static const String data = 'data';
+  // static const String categoryList = 'categoryList';
+  // static const String subCategoryList = 'subCategoryList';
 
   // static const String name = 'name';
   static const String image = 'image';
-  static const String parent = 'parent';
+  static const String type_id = 'type_id';
   static const String dob = 'dob';
 
   // ignore: constant_identifier_names
@@ -56,8 +60,9 @@ class ApiKeys {
   static const String category = 'category';
   static const String subCategory = 'subCategory';
   static const String pincode = 'pincode';
-  static const String idProof = 'idProof';
-  static const String drivingLicense = 'drivingLicense';
+  static const String idProof = 'id_proof';
+  static const String confirm_password = 'confirm_password';
+  static const String drivingLicense = 'driving_license';
   static const String certificate = 'certificate';
 
   // ignore: constant_identifier_names
@@ -65,8 +70,8 @@ class ApiKeys {
   static const String description = 'description';
   static const String price = 'price';
   static const String serviceId = 'serviceId';
-  static const String ratingCount = 'ratingCount';
-  static const String averageRating = 'averageRating';
+  static const String ratingCount = 'rating_count';
+  static const String averageRating = 'average_rating';
   static const String minDistance = 'minDistance';
   static const String maxDistance = 'maxDistance';
   static const String lng = 'lng';
@@ -83,11 +88,11 @@ class ApiKeys {
   static const String pickup = "pickup";
   static const String drop = "drop";
   static const String number = "number";
-  static const String vehicleModel = "vehicleModel";
-  static const String vehicleType = "vehicleType";
-  static const String vehicleYear = "vehicleYear";
-  static const String vehicleNumber = "vehicleNumber";
-  static const String vehicleMake = 'vehicleMake';
+  static const String vehicleModel = "vehicle_model";
+  static const String vehicleType = "vehicle_type";
+  static const String vehicleYear = "vehicle_year";
+  static const String vehicleNumber = "vehicle_no";
+  static const String vehicleMake = 'vehicle_make';
 }
 
 class SortByStatus {

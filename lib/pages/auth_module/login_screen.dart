@@ -91,9 +91,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: 15,
                           fillColor: MyColors.whiteColor,
                           keyboardType: TextInputType.emailAddress,
-                          hintText: "Username / Email address",
                           validator: (val) =>
                               ValidationFunction.emailValidation(val),
+                          hintText: "Email address",
                         ),
                         vSizedBox2,
                         InputTextFieldWidget(
@@ -132,31 +132,31 @@ class _LoginScreenState extends State<LoginScreen> {
                           onTap: () {
                             unFocusKeyBoard();
                             if (formKey.currentState!.validate()) {
-                              if (emailIdController.text.trim() ==
-                                  "user@gmail.com") {
-                                userType = UserTypeData.User;
-                                pushAndRemoveUntil(
-                                    context: context,
-                                    screen: const BottomBarScreen());
-                              } else if (emailIdController.text.trim() ==
-                                  "company@gmail.com") {
-                                userType = UserTypeData.Company;
-                                pushAndRemoveUntil(
-                                    context: context,
-                                    screen: const BottomBarScreen());
-                              } else if (emailIdController.text.trim() ==
-                                  "driver@gmail.com") {
-                                userType = UserTypeData.Driver;
-                                pushAndRemoveUntil(
-                                    context: context,
-                                    screen: const BottomBarScreen());
-                              } else {
-                                showSnackbar("Invalid Credential!");
-                              }
+                              // if (emailIdController.text.trim() ==
+                              //     "user@gmail.com") {
+                              //   userType = UserTypeData.User;
+                              //   pushAndRemoveUntil(
+                              //       context: context,
+                              //       screen: const BottomBarScreen());
+                              // } else if (emailIdController.text.trim() ==
+                              //     "company@gmail.com") {
+                              //   userType = UserTypeData.Company;
+                              //   pushAndRemoveUntil(
+                              //       context: context,
+                              //       screen: const BottomBarScreen());
+                              // } else if (emailIdController.text.trim() ==
+                              //     "driver@gmail.com") {
+                              //   userType = UserTypeData.Driver;
+                              //   pushAndRemoveUntil(
+                              //       context: context,
+                              //       screen: const BottomBarScreen());
+                              // } else {
+                              //   showSnackbar("Invalid Credential!");
+                              // }
 
-                              /*authProvider.login(context,
+                              authProvider.login(context,
                                   email: emailIdController.text,
-                                  password: passwordController.text);*/
+                                  password: passwordController.text);
                             }
                           },
                         ),

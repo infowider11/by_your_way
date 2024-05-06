@@ -16,6 +16,8 @@ import 'package:by_your_way/constants/global_data.dart';
 import 'package:by_your_way/constants/my_colors.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/types/user_type.dart';
+
 class TrackingScreen extends StatefulWidget {
   final bool isCompany;
 
@@ -214,7 +216,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
               ),
               vSizedBox2,
               MainHeadingText(
-                userType == UserTypeData.Driver
+                userDataNotifier.value!.userType == UserType.driver
                     ? widget.isCompany
                         ? "Company detail"
                         : "User detail"
@@ -263,7 +265,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                         ],
                       ),
                     ),
-                    if (userType == UserTypeData.Driver && !widget.isCompany)
+                    if (userDataNotifier.value!.userType == UserType.driver && !widget.isCompany)
                       CustomGestureDetector(
                         onTap: () {},
                         child: Padding(
@@ -279,7 +281,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                 ),
               ),
               vSizedBox2,
-              if (userType == UserTypeData.Driver)
+              if (userDataNotifier.value!.userType == UserType.driver)
                 RoundEdgedButton(
                   text: "Mark As Complete",
                   fontWeight: FontWeight.w700,

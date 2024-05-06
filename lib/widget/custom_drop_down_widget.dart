@@ -92,9 +92,11 @@ class CustomDropDownField extends StatelessWidget {
                       ]),
                 ),
               DropdownButtonFormField(
-                alignment: Alignment.bottomCenter,
+                onChanged: onChanged,
+                validator: validator,
                 value: selectedValue,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                alignment: Alignment.bottomCenter,
                 isDense: true,
                 decoration: InputDecoration(
                   prefixIcon: prefix,
@@ -141,8 +143,7 @@ class CustomDropDownField extends StatelessWidget {
                 ),
                 isExpanded: true,
                 dropdownColor: Colors.white,
-                onChanged: onChanged,
-                validator: validator,
+
                 icon: icons ??
                     Icon(
                       Icons.keyboard_arrow_down,

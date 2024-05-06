@@ -21,8 +21,8 @@ class ContactUsScreen extends StatefulWidget {
 
 class _ContactUsScreenState extends State<ContactUsScreen> {
   final formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
+  TextEditingController nameController = TextEditingController(text: userDataNotifier.value!.fullName);
+  TextEditingController emailController = TextEditingController(text: userDataNotifier.value!.email);
   TextEditingController messageController = TextEditingController();
 
   @override
@@ -92,7 +92,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                             ApiKeys.email: emailController.text,
                             ApiKeys.message: messageController.text,
                           };
-                          authProvider.changePassword(context,
+                          authProvider.contactUs(context,
                               request: request);
                         }
                       },

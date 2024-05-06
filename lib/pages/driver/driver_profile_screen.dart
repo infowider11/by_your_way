@@ -116,14 +116,14 @@ class _DriverProfileScreenState extends State<DriverProfileScreen>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const MainHeadingText(
-                                      "John Doe",
+                                     MainHeadingText(
+                                      "${userDataNotifier.value!.fullName}",
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
                                     vSizedBox05,
                                     ParagraphText(
-                                      "john@gmail.com",
+                                      "${userDataNotifier.value!.email}",
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                       color: MyColors.blackColor50,
@@ -131,7 +131,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen>
                                   ],
                                 ),
                               ),
-                              const Row(
+                               Row(
                                 children: [
                                   Icon(
                                     Icons.star,
@@ -140,7 +140,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen>
                                   ),
                                   hSizedBox02,
                                   MainHeadingText(
-                                    "4.7 (828k)",
+                                    "${userDataNotifier.value!.getRatingString()}",
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: MyColors.blackColor,

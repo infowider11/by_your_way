@@ -76,14 +76,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         load: authProvider.load,
                         fontWeight: FontWeight.w500,
                         borderRadius: 15,
-                        onTap: () {
+                        onTap: () async{
                           unFocusKeyBoard();
                           if (formKey.currentState!.validate()) {
-                            popPage(context: context);
-                            /*  authProvider.forgetPassword(
+
+                             await authProvider.forgetPassword(
                               context,
                               email: emailIdController.text,
-                            );*/
+                            );
+                             // popPage(context: context);
                           }
                         },
                       ),

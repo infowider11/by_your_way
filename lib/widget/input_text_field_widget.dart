@@ -153,7 +153,7 @@ class InputTextFieldWidget extends StatelessWidget {
                   controller: controller,
                   obscureText: obscureText,
                   keyboardType: keyboardType,
-                  style: TextStyle(color: textColor, fontSize: fontsize ?? 16,fontFamily: fontFamily),
+                  style: TextStyle(color: enabled?textColor:hintcolor??MyColors.blackColor50, fontSize: fontsize ?? 16,fontFamily: fontFamily),
                   autofocus: autofocus!,
                   textAlignVertical: TextAlignVertical.center,
                   textInputAction: TextInputAction.done,

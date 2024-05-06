@@ -1,4 +1,5 @@
 import 'package:by_your_way/functions/common_function.dart';
+import 'package:by_your_way/widget/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:by_your_way/constants/api_keys.dart';
@@ -29,7 +30,7 @@ class _ChangePassScreenState extends State<ChangePassScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => unFocusKeyBoard(),
-      child: Scaffold(
+      child: CustomScaffold(
         backgroundColor: MyColors.whiteColor,
         appBar: CustomAppBar(
           titleText: 'Back',

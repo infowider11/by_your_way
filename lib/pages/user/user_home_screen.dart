@@ -11,6 +11,8 @@ import 'package:by_your_way/widget/round_edged_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../functions/common_function.dart';
+import '../../provider/auth_provider.dart';
+import '../../provider/location_provider.dart';
 import '../../widget/custom_circular_image.dart';
 
 
@@ -25,6 +27,25 @@ class _HomeScreenState extends State<UserHomeScreen> {
   final key = GlobalKey<FormState>();
   final fromController = TextEditingController();
   final toController = TextEditingController();
+
+
+
+  getLocation() async {
+    var provider = await Provider.of<MyLocationProvider>(context, listen: false);
+    await provider.updateLatLong();
+    var authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.intervalProviderToCheckBlockStatus();
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getLocation();
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,30 +63,34 @@ class _HomeScreenState extends State<UserHomeScreen> {
                 width: 40,
               ),
               hSizedBox2,
-              const Expanded(
+               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     MainHeadingText(
-                      "Hello John!",
+                      "Hello ${userDataNotifier.value!.firstName}!",
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
                     ),
-                    MainHeadingText(
-                      "Los Angeles, USA",
-                      fontWeight: FontWeight.w400,
-                      fontSize: 15,
+                    Consumer<MyLocationProvider>(
+                      builder: (context, locationValue, child) =>
+                          MainHeadingText(
+                            locationValue.addressString??'',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 15,
+                          ),
                     ),
                   ],
                 ),
               ),
-              const CustomCircularImage(
-                  imageUrl: MyImagesUrl.iconDummyUser,
+               CustomCircularImage(
+                  imageUrl: userDataNotifier.value!.profileImage,
                   width: 45,
                   height: 45,
                   borderRadius: 25,
                   padding: 0,
-                  fileType: CustomFileType.asset),
+                  // fileType: CustomFileType.asset,
+              ),
             ],
           ),
         ),

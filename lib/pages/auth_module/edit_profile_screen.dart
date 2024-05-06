@@ -27,12 +27,21 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final formKey = GlobalKey<FormState>();
-  ValueNotifier<String> selectedCountryCode = ValueNotifier(defaultCountryCode);
+  ValueNotifier<String> selectedCountryCode = ValueNotifier(userDataNotifier.value!.phoneCode);
 
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController(
+    text: userDataNotifier.value!.firstName
+  );
+  TextEditingController lastNameController = TextEditingController(
+    text: userDataNotifier.value!.lastName
+  );
+  TextEditingController emailController = TextEditingController(
+    text: userDataNotifier.value!.email
+  );
+  TextEditingController phoneNumberController = TextEditingController(
+      text: userDataNotifier.value!.phone
+  );
+
   ValueNotifier<File?> image = ValueNotifier(null);
 
   @override
@@ -136,6 +145,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     hintText: "Email",
+                    enabled: false,
                     // readOnly: true,
                     borderRadius: 15,
                     //enabled: false,
@@ -147,6 +157,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       builder: (context, value, child) {
                         return InputTextFieldWidget(
                           controller: phoneNumberController,
+                          enabled: false,
                           borderRadius: 15,
                           fillColor: MyColors.whiteColor,
                           keyboardType: TextInputType.number,
@@ -173,18 +184,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   const SizedBox(
                                     width: 10,
                                   ),
-                                  Text(
+                                  ParagraphText(
                                     "+$value",
+                                    color:MyColors.blackColor50,
                                   ),
                                   const SizedBox(width: 4),
-                                  const Icon(Icons.keyboard_arrow_down,
-                                      size: 20, color: Colors.black),
+                                   Icon(Icons.keyboard_arrow_down,
+                                      size: 20, color: MyColors.blackColor50,),
                                   const SizedBox(width: 4),
-                                  const VerticalDivider(
+                                   VerticalDivider(
                                     width: 2,
                                     indent: 8,
                                     endIndent: 8,
-                                    color: Colors.black,
+                                    color: MyColors.blackColor50,
                                   ),
                                   const SizedBox(width: 10),
                                 ],
@@ -206,17 +218,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ApiKeys.firstName: firstNameController.text.trim(),
                             ApiKeys.lastName: lastNameController.text.trim(),
                             ApiKeys.email: emailController.text.trim(),
-                            ApiKeys.country_code: selectedCountryCode.value,
+                            ApiKeys.phoneCode: selectedCountryCode.value,
                             ApiKeys.phone: phoneNumberController.text.trim(),
+                            ApiKeys.userType: userDataNotifier.value!.userType,
+                            ApiKeys.phone_with_code:'${selectedCountryCode.value}${phoneNumberController.text.trim()}',
                           };
-                          request;
-                          popPage(context: context);
-                        /*  authProvider.editProfileFunction(
+                          // request;
+                          // popPage(context: context);
+                          authProvider.editProfileFunction(
                               context: context,
                               request: request,
                               files: image.value != null
                                   ? {ApiKeys.profileImage: image.value!}
-                                  : null);*/
+                                  : null);
                         }
                       },
                       verticalMargin: 20,

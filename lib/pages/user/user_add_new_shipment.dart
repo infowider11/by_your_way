@@ -339,7 +339,8 @@ class _UserAddNewShipmentState extends State<UserAddNewShipment> {
                                 req[ApiKeys.drop] = dropController.text.trim();
                                 req[ApiKeys.name] = nameController.text.trim();
                                 req[ApiKeys.number] = numberController.text.trim();
-                                req[ApiKeys.country_code] = selectedCountryCode.value;
+                                req[ApiKeys.phoneCode] = selectedCountryCode.value;
+                                req[ApiKeys.phone_with_code] = '${selectedCountryCode.value}${numberController.text.trim()}';
                               } else {
                                 showSnackbar('Please select weight.');
                               }

@@ -8,9 +8,9 @@ import 'dart:io';
 import '../constants/my_colors.dart';
 import '../widget/custom_text.dart';
 
-Future<File?> cameraImagePicker(BuildContext ctx, ) async {
+Future<File?> cameraImagePicker(BuildContext context, ) async {
   return showCupertinoModalPopup(
-      context: ctx,
+      context: context,
       builder: (_) => CupertinoActionSheet(
         actions: [
           CupertinoActionSheetAction(
@@ -24,7 +24,7 @@ Future<File?> cameraImagePicker(BuildContext ctx, ) async {
                   // } else {
                   //   pet_image = image;
                   // }
-                  Navigator.pop(ctx, image);
+                  Navigator.pop(context, image);
                 }
                 // popPage(context: ctx);
               },
@@ -37,13 +37,13 @@ Future<File?> cameraImagePicker(BuildContext ctx, ) async {
           CupertinoActionSheetAction(
               onPressed: () async {
                 File? image;
-                image = await pickImage(true);
+                image = await pickImage(true, prefferedCameraDevice: CameraDevice.front);
                 print('image--4--$image');
                 // if (image != null) {
                 //   profile_image = image;
                 //   notifyListeners();
                 // }
-                Navigator.pop(ctx, image);
+                Navigator.pop(context, image);
                 // popPage(context: ctx, image);
               },
               child: const SubHeadingText(
@@ -54,7 +54,7 @@ Future<File?> cameraImagePicker(BuildContext ctx, ) async {
               )),
         ],
         cancelButton: CupertinoActionSheetAction(
-            onPressed: () => CustomNavigation.pop(ctx),
+            onPressed: () => CustomNavigation.pop(context),
             child: const SubHeadingText(
               'Close',
               color: MyColors.primaryColor,
@@ -66,7 +66,7 @@ Future<File?> cameraImagePicker(BuildContext ctx, ) async {
 
 
 
-Future<File?> pickImage(bool isGallery) async {
+Future<File?> pickImage(bool isGallery, {CameraDevice prefferedCameraDevice = CameraDevice.rear}) async {
   final ImagePicker picker = ImagePicker();
 
   File? image;
@@ -84,6 +84,7 @@ Future<File?> pickImage(bool isGallery) async {
       pickedFile = await picker.pickImage(
           source: ImageSource.camera,
           imageQuality: imageQualityPercent,
+          preferredCameraDevice: prefferedCameraDevice,
           maxHeight: 600);
     }
     print('the error is $pickedFile');

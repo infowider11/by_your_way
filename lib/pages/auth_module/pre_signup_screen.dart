@@ -2,6 +2,7 @@ import 'package:by_your_way/constants/global_data.dart';
 import 'package:by_your_way/constants/my_colors.dart';
 import 'package:by_your_way/constants/my_image_url.dart';
 import 'package:by_your_way/constants/sized_box.dart';
+import 'package:by_your_way/constants/types/user_type.dart';
 import 'package:by_your_way/functions/common_function.dart';
 import 'package:by_your_way/functions/navigation_functions.dart';
 import 'package:by_your_way/pages/auth_module/signup_screen.dart';
@@ -12,15 +13,15 @@ import 'package:by_your_way/widget/round_edged_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../widget/custom_gesture_detector.dart';
-
-enum UserTypeData {
-  // ignore: constant_identifier_names
-  User,
-  // ignore: constant_identifier_names
-  Driver,
-  // ignore: constant_identifier_names
-  Company,
-}
+//
+// enum UserTypeData {
+//   // ignore: constant_identifier_names
+//   User,
+//   // ignore: constant_identifier_names
+//   Driver,
+//   // ignore: constant_identifier_names
+//   Company,
+// }
 
 class PreSignUpScreen extends StatefulWidget {
   const PreSignUpScreen({super.key});
@@ -30,16 +31,16 @@ class PreSignUpScreen extends StatefulWidget {
 }
 
 class _PreSignUpScreenState extends State<PreSignUpScreen> {
-  ValueNotifier<UserTypeData> userType = ValueNotifier(UserTypeData.User);
+  ValueNotifier<int> userType = ValueNotifier(UserType.user);
 
   List<String> iconList = [
     MyImagesUrl.iconUser,
     MyImagesUrl.iconDriver,
    // MyImagesUrl.iconCompany,
   ];
-  List<UserTypeData> usersList = [
-    UserTypeData.User,
-    UserTypeData.Driver,
+  List<int> usersList = [
+    UserType.user,
+    UserType.driver,
     //UserTypeData.Company
   ];
 
@@ -117,7 +118,7 @@ class _PreSignUpScreenState extends State<PreSignUpScreen> {
                                       ),
                                       hSizedBox2,
                                       ParagraphText(
-                                        usersList[index].name,
+                                        UserType.getName(usersList[index]),
                                         fontSize: 20,
                                       )
                                     ],

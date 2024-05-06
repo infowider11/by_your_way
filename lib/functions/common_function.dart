@@ -3,6 +3,7 @@ import 'package:by_your_way/constants/global_keys.dart';
 import 'package:by_your_way/constants/my_colors.dart';
 import 'package:by_your_way/constants/my_image_url.dart';
 import 'package:by_your_way/constants/sized_box.dart';
+import 'package:by_your_way/constants/types/user_type.dart';
 import 'package:by_your_way/functions/navigation_functions.dart';
 import 'package:by_your_way/functions/validation_functions.dart';
 import 'package:by_your_way/pages/auth_module/pre_signup_screen.dart';
@@ -40,14 +41,14 @@ Widget commonUserCard(
               push(
                   context: MyGlobalKeys.navigatorKey.currentContext!,
                   screen: ShipmentDetailScreen(
-                    userTypeData: userType!,
+                    userTypeData: userDataNotifier.value!.userType,
                   ));
             } else {
               push(
                 context: MyGlobalKeys.navigatorKey.currentContext!,
                 screen: RunningShipmentDetailScreen(
                   requestType: requestType,
-                  userTypeData: userType!,
+                  userTypeData: userDataNotifier.value!.userType,
                 ),
               );
             }
@@ -190,8 +191,9 @@ Widget commonUserCard(
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const MainHeadingText(
-                            "John Doe",
+                           MainHeadingText(
+                            "${userDataNotifier.value!.fullName}",
+                            // "John Doe",
                             fontSize: 14,
                           ),
                           vSizedBox02,
@@ -273,14 +275,14 @@ Widget commonDriverCard({
               push(
                   context: MyGlobalKeys.navigatorKey.currentContext!,
                   screen: ShipmentDetailScreen(
-                    userTypeData: userType!,
+                    userTypeData: userDataNotifier.value!.userType,
                   ));
             } else {
               push(
                 context: MyGlobalKeys.navigatorKey.currentContext!,
                 screen: RunningShipmentDetailScreen(
                   requestType: requestType,
-                  userTypeData: userType!,
+                  userTypeData: userDataNotifier.value!.userType!,
                   isCompany: false,
                 ),
               );
@@ -423,8 +425,9 @@ Widget commonDriverCard({
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const MainHeadingText(
-                          "John Doe",
+                         MainHeadingText(
+                          "${userDataNotifier.value!.fullName}",
+                          // "John Doe",
                           fontSize: 14,
                         ),
                         vSizedBox02,
@@ -497,7 +500,7 @@ Widget commonCompanyCard() {
         push(
             context: MyGlobalKeys.navigatorKey.currentContext!,
             screen: ShipmentDetailScreen(
-              userTypeData: userType!,
+              userTypeData: userDataNotifier.value!.userType,
               isCompany: true,
             ));
       },
@@ -719,7 +722,7 @@ Future<void> rattingBottomsheet({
         mainAxisSize: MainAxisSize.min,
         children: [
           MainHeadingText(
-            userType == UserTypeData.User ? "Rate the driver" : "Rate the User",
+            userDataNotifier.value!.userType == UserType.user ? "Rate the driver" : "Rate the User",
             fontWeight: FontWeight.w600,
             fontSize: 17,
           ),
@@ -847,7 +850,7 @@ Future<void> viewRattingBottomsheet({
           ),
           vSizedBox2,
           MainHeadingText(
-            userType == UserTypeData.User ? "Driver Review" : "User Review",
+            userDataNotifier.value!.userType == UserType.user ? "Driver Review" : "User Review",
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),

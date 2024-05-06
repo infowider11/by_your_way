@@ -226,7 +226,7 @@ class FirebasePushNotifications {
           // });
           // sendPushNotifications(tokens: [token], data: {}, body: 'Sample notifications', title: 'Title');
           var request = {
-            'deviceId': value,
+            ApiKeys.deviceId:value,
             ApiKeys.userType: userDataNotifier.value!.userType,
           };
           await NewestWebServices.getResponse(

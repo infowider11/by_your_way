@@ -1,3 +1,4 @@
+import 'package:by_your_way/constants/global_data.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import '../constants/my_colors.dart';
@@ -17,6 +18,7 @@ class CustomDropdownButton<T> extends StatelessWidget {
   final double labelFontSize;
   final String itemMapKey;
   final Color fieldColor;
+  final Color bgColor;
   final double borderRadius;
   final CrossAxisAlignment crossAxisAlignment;
   final String? Function(T?)? validator;
@@ -31,10 +33,11 @@ class CustomDropdownButton<T> extends StatelessWidget {
     required this.hint,
     this.onChanged,
     this.border,
-     this.borderRadius = 30,
+     this.borderRadius = globalBorderRadius,
     this.isLabel = true,
     this.itemMapKey = 'name',
     this.fieldColor=Colors.transparent,
+    this.bgColor=Colors.transparent,
     this.crossAxisAlignment = CrossAxisAlignment.start
 
   }) : super(key: key);
@@ -52,7 +55,7 @@ class CustomDropdownButton<T> extends StatelessWidget {
           height: 60,
           margin: EdgeInsets.symmetric(vertical: margin),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:bgColor,
             borderRadius: BorderRadius.circular(borderRadius)
           ),
           // decoration: BoxDecoration(
@@ -90,8 +93,8 @@ class CustomDropdownButton<T> extends StatelessWidget {
             dropdownDecoratorProps: DropDownDecoratorProps(
               dropdownSearchDecoration: InputDecoration(
                 // labelText: "Menu mode",
-                // hintText: "$hint",
-                labelText: hint,
+                hintText: "$hint",
+                // labelText: hint,
                 // alignLabelWithHint: true,
 
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -141,7 +144,9 @@ class CustomDropdownButton<T> extends StatelessWidget {
               // myCustomPrintStatement('the a is $a');
               if(value==null){
                 return Container(
-                  child: ParagraphText('$hint'),
+                  child: ParagraphText('$hint', color: MyColors.blackColor50,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,),
                 );
               }
               try{

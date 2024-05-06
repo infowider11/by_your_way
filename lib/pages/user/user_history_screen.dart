@@ -8,6 +8,9 @@ import 'package:by_your_way/widget/custom_circular_image.dart';
 import 'package:by_your_way/widget/custom_gesture_detector.dart';
 import 'package:by_your_way/widget/custom_text.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/location_provider.dart';
 
 class UserHistoryScreen extends StatefulWidget {
   const UserHistoryScreen({super.key});
@@ -45,30 +48,34 @@ class _UserHistoryScreenState extends State<UserHistoryScreen> {
                 width: 40,
               ),
               hSizedBox2,
-              const Expanded(
+               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     MainHeadingText(
-                      "Hello John!",
+                      "Hello ${userDataNotifier.value!.firstName}!",
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
                     ),
-                    MainHeadingText(
-                      "Los Angeles, USA",
-                      fontWeight: FontWeight.w400,
-                      fontSize: 15,
+                    Consumer<MyLocationProvider>(
+                      builder: (context, locationValue, child) =>
+                          MainHeadingText(
+                            locationValue.addressString??'',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 15,
+                          ),
                     ),
                   ],
                 ),
               ),
-              const CustomCircularImage(
-                  imageUrl: MyImagesUrl.iconDummyUser,
+               CustomCircularImage(
+                  imageUrl: userDataNotifier.value!.profileImage,
                   width: 45,
                   height: 45,
                   borderRadius: 25,
                   padding: 0,
-                  fileType: CustomFileType.asset),
+                  // fileType: CustomFileType.asset,
+               ),
             ],
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:by_your_way/constants/api_keys.dart';
 import 'package:by_your_way/functions/common_function.dart';
+import 'package:by_your_way/functions/print_function.dart';
 import 'package:by_your_way/pages/auth_module/driver_signup_screen.dart';
 import 'package:by_your_way/pages/auth_module/pre_signup_screen.dart';
 import 'package:by_your_way/pages/common/bottom_tab.dart';
@@ -11,6 +12,7 @@ import 'package:by_your_way/widget/custom_appbar.dart';
 import '../../constants/global_data.dart';
 import '../../constants/my_colors.dart';
 import '../../constants/sized_box.dart';
+import '../../constants/types/user_type.dart';
 import '../../functions/navigation_functions.dart';
 import '../../functions/validation_functions.dart';
 import '../../provider/auth_provider.dart';
@@ -20,7 +22,7 @@ import '../../widget/round_edged_button.dart';
 import 'package:country_picker/country_picker.dart';
 
 class SignupScreen extends StatefulWidget {
-  final UserTypeData userType;
+  final int userType;
 
   const SignupScreen({Key? key, required this.userType}) : super(key: key);
 
@@ -49,7 +51,7 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Scaffold(
               backgroundColor: MyColors.whiteColor,
               appBar: CustomAppBar(
-                titleText: "   ${widget.userType.name} Sign Up",
+                titleText: "   ${UserType.getName(widget.userType)} Sign Up",
               ),
               body: Form(
                 key: formKey,
@@ -63,7 +65,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       children: [
                         vSizedBox2,
                         MainHeadingText(
-                          '${widget.userType.name} Sign Up',
+                          '${UserType.getName(widget.userType)} Sign Up',
                           fontWeight: FontWeight.w600,
                           fontSize: 30,
                         ),
@@ -183,7 +185,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         vSizedBox,
                         RoundEdgedButton(
-                          text: widget.userType == UserTypeData.User
+                          text: widget.userType == UserType.user
                               ? "Sign Up"
                               : "Next",
                           load: authProvider.load,
@@ -192,75 +194,78 @@ class _SignupScreenState extends State<SignupScreen> {
                           onTap: () async {
                             unFocusKeyBoard();
                             if (formKey.currentState!.validate()) {
-                              if (widget.userType == UserTypeData.User) {
-                                userType = widget.userType;
-                                pushAndRemoveUntil(
-                                    context: context,
-                                    screen: const BottomBarScreen());
-                                /* authProvider.signup(
-                                  context,
-                                  request: {
-                                    ApiKeys.firstName:
-                                        firstNameController.text.trim(),
-                                    ApiKeys.lastName:
-                                        lastNameController.text.trim(),
-                                    ApiKeys.phone:
-                                        mobileNumberController.text.trim(),
-                                    ApiKeys.country_code:
-                                        selectedCountryCode.value,
-                                    ApiKeys.email:
-                                        emailAddressController.text.trim(),
-                                    ApiKeys.password:
-                                        passwordController.text.trim(),
-                                    ApiKeys.userType: widget.userType.name
-                                  },
-                                );*/
-                              } else if (widget.userType ==
-                                  UserTypeData.Company) {
-                                await showSuccessPopup(
-                                  context: context,
-                                  heading: "Congratulations!!",
-                                  subtitle:
-                                      "Your Registration has been completed Successfully. Admin will check your documents and back to you 3-4 business days",
-                                  bottomWidget: Center(
-                                    child: RoundEdgedButton(
-                                      text: "OK",
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      height: 50,
-                                      width: 90,
-                                      borderRadius: 10,
-                                      onTap: () {
-                                        userType = UserTypeData.Company;
-                                        pushAndRemoveUntil(
-                                          context: context,
-                                          screen: const BottomBarScreen(),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                push(
-                                    context: context,
-                                    screen: DriverSignupScreen(
-                                      request: {
-                                        ApiKeys.firstName:
-                                            firstNameController.text.trim(),
-                                        ApiKeys.lastName:
-                                            lastNameController.text.trim(),
-                                        ApiKeys.phone:
-                                            mobileNumberController.text.trim(),
-                                        ApiKeys.country_code:
-                                            selectedCountryCode.value,
-                                        ApiKeys.email:
-                                            emailAddressController.text.trim(),
-                                        ApiKeys.password:
-                                            passwordController.text.trim(),
-                                        ApiKeys.userType: widget.userType.name
-                                      },
-                                    ));
+                              var request = {
+                                ApiKeys.firstName:
+                                firstNameController.text.trim(),
+                                ApiKeys.lastName:
+                                lastNameController.text.trim(),
+                                ApiKeys.phone:
+                                mobileNumberController.text.trim(),
+                                ApiKeys.phoneCode:
+                                selectedCountryCode.value,
+                                ApiKeys.phone_with_code:'${selectedCountryCode.value}${mobileNumberController.text.trim()}',
+                                ApiKeys.email:
+                                emailAddressController.text.trim(),
+                                ApiKeys.password:
+                                passwordController.text.trim(),
+                                ApiKeys.userType: widget.userType
+                              };
+                              myCustomPrintStatement('sdfa  kj${request}');
+                              // return;
+
+                              bool result = await authProvider.checkUniqueness(context, email: emailAddressController.text, phoneNumberWithCode: '${request[ApiKeys.phone_with_code]}');
+                              if(result){
+                                if (widget.userType == UserType.user) {
+                                  /// commented to check
+                                  // userType = widget.userType;
+                                  // pushAndRemoveUntil(
+                                  //     context: context,
+                                  //     screen: const BottomBarScreen());
+
+
+                                  authProvider.signup(
+                                    context,
+                                    request: request,
+                                  );
+                                }
+
+                                else {
+                                  push(
+                                      context: context,
+                                      screen: DriverSignupScreen(
+                                        request: request,
+                                      ));
+                                }
                               }
+
+
+
+                              // else if (widget.userType ==
+                              //     UserTypeData.Company) {
+                              //   await showSuccessPopup(
+                              //     context: context,
+                              //     heading: "Congratulations!!",
+                              //     subtitle:
+                              //         "Your Registration has been completed Successfully. Admin will check your documents and back to you 3-4 business days",
+                              //     bottomWidget: Center(
+                              //       child: RoundEdgedButton(
+                              //         text: "OK",
+                              //         fontSize: 18,
+                              //         fontWeight: FontWeight.w600,
+                              //         height: 50,
+                              //         width: 90,
+                              //         borderRadius: 10,
+                              //         onTap: () {
+                              //           userType = UserTypeData.Company;
+                              //           pushAndRemoveUntil(
+                              //             context: context,
+                              //             screen: const BottomBarScreen(),
+                              //           );
+                              //         },
+                              //       ),
+                              //     ),
+                              //   );
+                              // }
                             }
                           },
                         ),

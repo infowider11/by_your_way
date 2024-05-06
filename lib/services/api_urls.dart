@@ -4,13 +4,28 @@
 class ApiUrls {
   // String mapBoxBaseUrl = 'https://www.webwiders.in/WEB01/manish/';
 
-  static const baseUrl = 'https://www.dev.webwiders.com/simplexcity/api/';
-  static const baseImageUrl = 'https://dev.webwiders.com/simplexcity/storage/app/public/';
+  // static const baseUrl = 'https://www.dev.webwiders.com/onyourway/api/';
+  static const baseUrl = 'https://developer.bluediamondresearch.com/onyourway/api/';
+  static const baseImageUrl = 'https://developer.bluediamondresearch.com/onyourway/storage/app/public/';
 
   static const String appSettings = baseUrl + 'app-settings';
   static const String updateDeviceToken = baseUrl + 'update_device_id';
   static const String login = baseUrl + 'login';
+  static const String checkPhoneEmailUniqueness = baseUrl + 'check-phone-email';
   static const String getOtp = baseUrl + 'get-otp';
+  static const String getVehicleTypeList = baseUrl + 'vehicle-type-list';
+  static const String getVehicleModelList = baseUrl + 'vehicle-model-list';
+
+
+
+
+
+
+
+
+
+
+
   // static const String getCountryList = baseUrl + 'get-country-list';
   static const String getCityList = baseUrl + 'city-list';  //get
   static const String forgetPassword = baseUrl + 'forgot-password';

@@ -107,8 +107,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const MainHeadingText(
-                                          "John Doe",
+                                         MainHeadingText(
+                                          "${userDataNotifier.value!.fullName}",
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -122,7 +122,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       ],
                                     ),
                                   ),
-                                  const Row(
+                                   Row(
                                     children: [
                                       Icon(
                                         Icons.star,
@@ -131,7 +131,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       ),
                                       hSizedBox02,
                                       MainHeadingText(
-                                        "4.7 (828k)",
+                                        "${userDataNotifier.value!.getRatingString()}",
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color: MyColors.blackColor,
@@ -262,8 +262,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      const MainHeadingText(
-                                                        "John Doe",
+                                                       MainHeadingText(
+                                                        "${userDataNotifier.value!.fullName}",
                                                         fontSize: 14,
                                                       ),
                                                       MainHeadingText(

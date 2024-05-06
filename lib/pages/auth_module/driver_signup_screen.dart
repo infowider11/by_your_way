@@ -1,19 +1,25 @@
+import 'dart:io';
+
 import 'package:by_your_way/constants/api_keys.dart';
 import 'package:by_your_way/constants/global_data.dart';
 import 'package:by_your_way/constants/my_colors.dart';
 import 'package:by_your_way/constants/sized_box.dart';
 import 'package:by_your_way/functions/common_function.dart';
 import 'package:by_your_way/functions/navigation_functions.dart';
+import 'package:by_your_way/functions/pick_image_newest.dart';
 import 'package:by_your_way/functions/validation_functions.dart';
 import 'package:by_your_way/provider/auth_provider.dart';
+import 'package:by_your_way/services/newest_webservices.dart';
 import 'package:by_your_way/widget/common_alert_dailog.dart';
 import 'package:by_your_way/widget/custom_appbar.dart';
 import 'package:by_your_way/widget/custom_drop_down_widget.dart';
+import 'package:by_your_way/widget/custom_dropdown.dart';
 import 'package:by_your_way/widget/custom_rich_text.dart';
 import 'package:by_your_way/widget/custom_text.dart';
 import 'package:by_your_way/widget/input_text_field_widget.dart';
 import 'package:by_your_way/widget/round_edged_button.dart';
 import 'package:by_your_way/widget/show_snackbar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -34,12 +40,16 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
   final formKey = GlobalKey<FormState>();
   ValueNotifier selectedVehicleType = ValueNotifier(null);
   ValueNotifier selectedVehicleModel = ValueNotifier(null);
-  ValueNotifier<XFile?> idProof = ValueNotifier(null);
-  ValueNotifier<XFile?> drivingLicense = ValueNotifier(null);
+  ValueNotifier<File?> idProof = ValueNotifier(null);
+  ValueNotifier<File?> drivingLicense = ValueNotifier(null);
   TextEditingController vNumber = TextEditingController();
   TextEditingController vYear = TextEditingController();
   TextEditingController vModel = TextEditingController();
   TextEditingController vMake = TextEditingController();
+
+  List subCategoryList = [];
+  // ValueNotifier<File?> idProofNotifier = ValueNotifier(null);
+  // ValueNotifier<File?> drivingLicense = ValueNotifier(null);
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +58,8 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
         return GestureDetector(
           onTap: () => unFocusKeyBoard(),
           child: AbsorbPointer(
-            absorbing: authProvider.load,
+            // absorbing: authProvider.load,
+            absorbing: false,
             child: Scaffold(
               backgroundColor: MyColors.whiteColor,
               appBar: CustomAppBar(
@@ -81,7 +92,7 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                                 color: MyColors.blackColor.withOpacity(0.4),
                                 width: 1),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               MainHeadingText(
@@ -89,12 +100,28 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
-                              RoundEdgedButton(
-                                text: "upload",
-                                fontSize: 14,
-                                height: 25,
-                                width: 80,
-                              ),
+                              ValueListenableBuilder(
+                                  valueListenable: idProof,
+                                  builder: (context, idProofValue, child) {
+                                    return RoundEdgedButton(
+                                      text: idProofValue != null
+                                          ? "Uploaded"
+                                          : "Upload",
+                                      onTap: () async {
+                                        var file =
+                                            await cameraImagePicker(context);
+                                        if (file != null) {
+                                          idProof.value = file;
+                                        }
+                                      },
+                                      fontSize: 14,
+                                      height: 25,
+                                      width: 80,
+                                      color: idProofValue != null
+                                          ? MyColors.greenColor
+                                          : MyColors.primaryColor,
+                                    );
+                                  }),
                             ],
                           ),
                         ),
@@ -108,7 +135,7 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                                 color: MyColors.blackColor.withOpacity(0.4),
                                 width: 1),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               MainHeadingText(
@@ -116,12 +143,28 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
-                              RoundEdgedButton(
-                                text: "upload",
-                                fontSize: 14,
-                                height: 25,
-                                width: 80,
-                              ),
+                              ValueListenableBuilder(
+                                  valueListenable: drivingLicense,
+                                  builder: (context, idProofValue, child) {
+                                    return RoundEdgedButton(
+                                      text: idProofValue != null
+                                          ? "Uploaded"
+                                          : "Upload",
+                                      onTap: () async {
+                                        var file =
+                                            await cameraImagePicker(context);
+                                        if (file != null) {
+                                          drivingLicense.value = file;
+                                        }
+                                      },
+                                      fontSize: 14,
+                                      height: 25,
+                                      width: 80,
+                                      color: idProofValue != null
+                                          ? MyColors.greenColor
+                                          : MyColors.primaryColor,
+                                    );
+                                  }),
                             ],
                           ),
                         ),
@@ -134,30 +177,64 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                         ),
                         vSizedBox2,
                         ValueListenableBuilder(
-                          valueListenable: selectedVehicleType,
-                          builder: (_, value, __) => CustomDropDownField(
-                            validator: (val) =>
-                                ValidationFunction.requiredValidation(
-                              val.toString(),
-                            ),
-                            headingFontSize: 18,
-                            headingTextColor: MyColors.blackColor,
-                            hintText: 'Select Vehicle Type',
-                            onChanged: (val) {
-                              selectedVehicleType.value = val;
+                            valueListenable: selectedVehicleType,
+                            builder: (context, value, child) {
+                              return CustomDropdownButton(
+                                items: globalCategoriesList,
+                                hint: 'Select Vehicle Type',
+                                validator: (val) =>
+                                    ValidationFunction.requiredValidation(
+                                      val.toString(),
+                                    ),
+                                onChanged: (val) {
+                                  selectedVehicleType.value = val;
+                                  print('the select cat value $val');
+                                  subCategoryList =
+                                      getSubCatetoriesList(val?[ApiKeys.id]);
+                                  print(
+                                      'the select sub cat value  $subCategoryList');
+                                  Future.delayed(Duration(milliseconds: 100))
+                                      .then((value) {
+                                    selectedVehicleModel.value = null;
+                                    selectedVehicleModel.notifyListeners();
+                                  });
+                                  setState(() {});
+                                  // selectedVehicleType.value = val;
+                                },
+                              );
                             },
-                            itemsList: const [
-                              {"name": "Two Sitter"},
-                              {"name": "Three Sitter"},
-                              {"name": "Four Sitter"},
-                              {"name": "Six Sitter"},
-                              {"name": "Eight Sitter"},
-                            ],
-                            borderRadius: 15,
-                            selectedValue: value,
-                            popUpTextKey: 'name',
-                          ),
                         ),
+                        // ValueListenableBuilder(
+                        //   valueListenable: selectedVehicleType,
+                        //   builder: (_, value, __) => CustomDropDownField(
+                        //     validator: (val) =>
+                        //         ValidationFunction.requiredValidation(
+                        //       val.toString(),
+                        //     ),
+                        //     headingFontSize: 18,
+                        //     headingTextColor: MyColors.blackColor,
+                        //     hintText: 'Select Vehicle Type',
+                        //     onChanged: (val) {
+                        //       selectedVehicleType.value = val;
+                        //       print('the select cat value $val');
+                        //       subCategoryList =
+                        //           getSubCatetoriesList(val?[ApiKeys.id]);
+                        //       print(
+                        //           'the select sub cat value  $subCategoryList');
+                        //       Future.delayed(Duration(milliseconds: 100))
+                        //           .then((value) {
+                        //         selectedVehicleModel.value = null;
+                        //         selectedVehicleModel.notifyListeners();
+                        //       });
+                        //       setState(() {});
+                        //       // selectedVehicleType.value = val;
+                        //     },
+                        //     itemsList: globalCategoriesList,
+                        //     borderRadius: 15,
+                        //     selectedValue: value,
+                        //     popUpTextKey: 'name',
+                        //   ),
+                        // ),
                         vSizedBox,
                         Row(
                           children: [
@@ -210,13 +287,7 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                             onChanged: (val) {
                               selectedVehicleModel.value = val;
                             },
-                            itemsList: const [
-                              {"name": "Model 1"},
-                              {"name": "Model 2"},
-                              {"name": "Model 3"},
-                              {"name": "Model 4"},
-                              {"name": "Model 5"},
-                            ],
+                            itemsList: subCategoryList,
                             borderRadius: 15,
                             selectedValue: value,
                             popUpTextKey: 'name',
@@ -261,45 +332,59 @@ class _DriverSignupScreenState extends State<DriverSignupScreen> {
                           fontWeight: FontWeight.w500,
                           borderRadius: 15,
                           onTap: () async {
-                            unFocusKeyBoard();
+                            // unFocusKeyBoard();
+                            print('dfafd');
+                            // authProvider.hideLoading();
+                            // return;
+                            // final ImagePicker picker = ImagePicker();
+                            // await picker.pickImage(
+                            //     source: ImageSource.camera,
+                            //     imageQuality: 100,
+                            //     preferredCameraDevice: CameraDevice.rear,
+                            //     maxHeight: 600);
+                            // return;
+
+                            if (idProof.value == null) {
+                              showSnackbar('Please Upload Id Proof');
+                              return;
+                            }
+                            if (drivingLicense.value == null) {
+                              showSnackbar('Please Upload Driving License');
+                              return;
+                            }
                             if (formKey.currentState!.validate()) {
+                              // var driving_license_file = {
+                              //   'image_file': drivingLicense.value
+                              // };
+                              authProvider.showLoading();
+                              String? drivingLicenseString =
+                                  await NewestWebServices.uploadImageAndGetUrl(
+                                      drivingLicense.value!.path);
+                              // var idProof_file = {
+                              //   'image_file': drivingLicense.value
+                              // };
+                              String? idProofString =
+                                  await NewestWebServices.uploadImageAndGetUrl(
+                                      idProof.value!.path);
                               if (selectedVehicleType.value != null) {
                                 if (selectedVehicleModel.value != null) {
-                                  /* authProvider.signupDriver(
-                                    context,
-                                    request: req,
-                                    files: {},
-                                  );*/
                                   Map<String, dynamic> req = widget.request;
                                   req[ApiKeys.vehicleType] =
-                                      selectedVehicleType.value['name'];
+                                      selectedVehicleType.value['id'];
                                   req[ApiKeys.vehicleModel] =
-                                      selectedVehicleModel.value['name'];
+                                      selectedVehicleModel.value['id'];
                                   req[ApiKeys.vehicleYear] = vYear.text.trim();
-                                  req[ApiKeys.vehicleNumber] = vNumber.text.trim();
+                                  req[ApiKeys.vehicleNumber] =
+                                      vNumber.text.trim();
                                   req[ApiKeys.vehicleMake] = vMake.text.trim();
-                                  await showSuccessPopup(
-                                    context: context,
-                                    heading: "Congratulations!!",
-                                    subtitle:
-                                        "Your Registration has been completed Successfully. Admin will check your documents and back to you 3-4 business days",
-                                    bottomWidget: Center(
-                                      child: RoundEdgedButton(
-                                        text: "OK",
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        height: 50,
-                                        width: 90,
-                                        borderRadius: 10,
-                                        onTap: () {
-                                          userType = UserTypeData.Driver;
-                                          pushAndRemoveUntil(
-                                              context: context,
-                                              screen: const BottomBarScreen());
-                                        },
-                                      ),
-                                    ),
-                                  );
+                                  req[ApiKeys.drivingLicense] =
+                                      drivingLicenseString;
+                                  req[ApiKeys.idProof] = idProofString;
+                                  req[ApiKeys.confirm_password] = req[ApiKeys.password];
+                                  print('the request for signup is $req');
+
+                                  // return;
+                                  authProvider.signup(context, request: req);
                                 } else {
                                   showSnackbar('Please select vehicle model.');
                                 }

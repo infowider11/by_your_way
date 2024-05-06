@@ -1,5 +1,7 @@
 import 'package:by_your_way/provider/admin_settings_provider.dart';
+import 'package:by_your_way/provider/app_language_provider.dart';
 import 'package:by_your_way/provider/bottom_tabbar_provider.dart';
+import 'package:by_your_way/provider/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'constants/global_keys.dart';
 import 'pages/auth_module/splash_screen.dart';
@@ -9,9 +11,11 @@ import 'package:provider/provider.dart';
 void main() {
   runApp( MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => AppLanguageProvider(),),
         ChangeNotifierProvider(create: (context) => AuthProvider(),),
         ChangeNotifierProvider(create: (context) => AdminSettingsProvider(),),
         ChangeNotifierProvider(create: (context) => BottomTabBarProvider(),),
+        ChangeNotifierProvider(create: (context) => MyLocationProvider(),),
       ],child: const MyApp()));
 }
 

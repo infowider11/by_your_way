@@ -13,7 +13,9 @@ import 'package:by_your_way/widget/custom_text.dart';
 import '../constants/global_data.dart';
 import '../functions/print_function.dart';
 import '../modal/response_modal.dart';
+import '../provider/app_language_provider.dart';
 import '../widget/show_snackbar.dart';
+import 'api_urls.dart';
 
 ResponseModal failedResponseModal = ResponseModal(status: 0, message: 'Api Failed in catch', error: {"Api":"Api Failed in catch block"}, data: [],
   fullData: {},);
@@ -40,16 +42,17 @@ class NewestWebServices {
     ApiMethod apiMethod = ApiMethod.post,
     Map<String, String>? customHeaders,  // if this is passed then no default headers will be passed
 })async{
-    var loadingProvider = Provider.of<AppLoadingProvider>(MyGlobalKeys.navigatorKey.currentContext!, listen: false);
-    if(load){
-      loadingProvider.showLoading();
-    }
+    // var loadingProvider = Provider.of<AppLoadingProvider>(MyGlobalKeys.navigatorKey.currentContext!, listen: false);
+    // if(load){
+    //   loadingProvider.showLoading();
+    // }
 
     // request['lang'] = selectedLanguageNotifier.value['key'];
    try{
      Map<String,String> newHeaders = {};
      newHeaders.addAll(globalHeaders);
-     newHeaders['Accept-Language'] = selectedLanguageNotifier.value['key'];
+     var appLanguageProvider = Provider.of<AppLanguageProvider>(MyGlobalKeys.navigatorKey.currentContext!, listen: false);
+     newHeaders['Accept-Lang'] = selectedLanguageNotifier['key'];
      newHeaders['timezone'] = currentTimezone;
      late http.Response response;
      if(userToken!=null){
@@ -73,9 +76,7 @@ class NewestWebServices {
      }
 
      myCustomLogStatements('the response for $apiUrl with status code ${response.statusCode} is ${response.body}');
-     if(load){
-       loadingProvider.hideLoading();
-     }
+
      var responseModal = ResponseModal.fromHttpResponse(response);
      if (showSuccessMessage) {
        showSnackbar(responseModal.message);
@@ -112,6 +113,28 @@ class NewestWebServices {
   }
 
 
+  static Future<String?> uploadImageAndGetUrl(String filePath)async{
+    var files = {'image_file': File(filePath)};
+    var response = await NewestWebServices.postDataWithImageFunction(
+        body: {}, files: files, apiUrl: ApiUrls.uploadImageUrl);
+
+    if(response.status==1){
+      return response.data['url'];
+    }
+  }
+
+
+  static Future<List<String>> uploadMultipleImagesAndGetUrl(Map<String , dynamic> files)async{
+    // var files = {'imageFile': image};
+    var response = await NewestWebServices.postDataWithImageFunction(
+        body: {}, files: files, apiUrl: ApiUrls.uploadImageUrl);
+
+    if(response.status==1){
+      return response.data['urls']??[];
+    }
+    return [];
+  }
+
   static String getUrlString({required Map<String, dynamic> request, required String apiUrl,}){
     String tempGetRequest = '$apiUrl?';
     request.forEach((key, value) {
@@ -138,16 +161,17 @@ class NewestWebServices {
     ApiMethod apiMethod = ApiMethod.post,
     Map<String, String>? customHeaders,  // if this is passed then no default headers will be passed
   })async{
-    var loadingProvider = Provider.of<AppLoadingProvider>(MyGlobalKeys.navigatorKey.currentContext!, listen: false);
-    if(load){
-      loadingProvider.showLoading();
-    }
+    // var loadingProvider = Provider.of<AppLoadingProvider>(MyGlobalKeys.navigatorKey.currentContext!, listen: false);
+    // if(load){
+    //   loadingProvider.showLoading();
+    // }
 
     // request['lang'] = selectedLanguageNotifier.value['key'];
     try{
       Map<String,String> newHeaders = {};
       newHeaders.addAll(globalHeaders);
-      newHeaders['Accept-Language'] = selectedLanguageNotifier.value['key'];
+      var appLanguageProvider = Provider.of<AppLanguageProvider>(MyGlobalKeys.navigatorKey.currentContext!, listen: false);
+      newHeaders['Accept-Lang'] = selectedLanguageNotifier['key'];
       late http.Response response;
       if(userToken!=null){
         newHeaders['Authorization'] = 'Bearer $userToken';
@@ -170,9 +194,9 @@ class NewestWebServices {
       }
 
       myCustomLogStatements('the response for $apiUrl with status code ${response.statusCode} is ${response.body}');
-      if(load){
-        loadingProvider.hideLoading();
-      }
+      // if(load){
+      //   loadingProvider.hideLoading();
+      // }
 
       return response;
     } catch(e){
@@ -217,7 +241,9 @@ class NewestWebServices {
     if (userToken != null) {
       newHeaders['Authorization'] = 'Bearer $userToken';
     }
-    newHeaders['lang'] = selectedLanguageNotifier.value['key'];
+    var appLanguageProvider = Provider.of<AppLanguageProvider>(MyGlobalKeys.navigatorKey.currentContext!, listen: false);
+    newHeaders['Accept-Language'] = selectedLanguageNotifier['key'];
+    // newHeaders['lang'] = selectedLanguageNotifier.value['key'];
     myCustomPrintStatement(
         'the request for url : $apiUrl is $body with headers $newHeaders');
     myCustomPrintStatement('the file request is $files');
